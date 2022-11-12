@@ -1,28 +1,16 @@
 import React from 'react';
-import './styles.css';
-import { UserCard } from './components/UserCard';
-import { useAllUsers } from './hooks/useAllUsers';
+import { ChakraProvider } from '@chakra-ui/react';
+import { BrowserRouter } from 'react-router-dom';
 
-function App() {
-    const { getUsers, userProfiles, loading, error } = useAllUsers();
-    const onClickFetchUser = () => getUsers();
+import theme from './theme/theme';
+import { Router } from './router/Router';
+
+export default function App() {
     return (
-        <div className="App">
-            <button onClick={onClickFetchUser}>データ取得</button>
-            <br />
-            {error ? (
-                <p style={{ color: 'red' }}>データの取得に失敗しました</p>
-            ) : loading ? (
-                <p>Loading...</p>
-            ) : (
-                <>
-                    {userProfiles.map((user) => (
-                        <UserCard key={user.id} user={user} />
-                    ))}
-                </>
-            )}
-        </div>
+        <ChakraProvider theme={theme}>
+            <BrowserRouter>
+                <Router />
+            </BrowserRouter>
+        </ChakraProvider>
     );
 }
-
-export default App;
