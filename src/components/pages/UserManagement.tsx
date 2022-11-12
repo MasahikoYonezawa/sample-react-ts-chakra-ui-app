@@ -11,11 +11,14 @@ import { UserCard } from '../organisms/user/UserCard';
 import { useAllUsers } from '../../hooks/useAllUsers';
 import { UserDetailModal } from '../organisms/user/UserDetailModal';
 import { useSelectUser } from '../../hooks/useSelectUser';
+import { useLoginUser } from '../../hooks/providers/useLoginUserProvider';
 
 export const UserManagement: FC = memo(() => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { getUsers, users, loading } = useAllUsers();
     const { onSelectUser, selectedUser } = useSelectUser();
+    const { loginUser } = useLoginUser();
+    console.log(loginUser);
 
     useEffect(() => getUsers(), []);
 
@@ -51,6 +54,7 @@ export const UserManagement: FC = memo(() => {
                 user={selectedUser}
                 isOpen={isOpen}
                 onClose={onClose}
+                isAdmin={loginUser?.isAdmin}
             />
         </>
     );
