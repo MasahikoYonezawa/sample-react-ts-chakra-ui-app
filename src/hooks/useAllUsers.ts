@@ -1,33 +1,29 @@
-import { useState } from 'react';
-import { UserProfile } from '../types/userProfile';
+import { useCallback, useState } from 'react';
 import axios from 'axios';
+
 import { User } from '../types/api/user';
+import { useMessage } from './useMessage';
 
 export const useAllUsers = () => {
-    const [userProfiles, setUserProfiles] = useState<Array<UserProfile>>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
+    const { showMessage } = useMessage();
 
-    const getUsers = () => {
+    const [loading, setLoading] = useState(false);
+    const [users, setUsers] = useState<Array<User>>([]);
+
+    const getUsers = useCallback(() => {
         setLoading(true);
-        setError(false);
         axios
             .get<Array<User>>('https://jsonplaceholder.typicode.com/users')
-            .then((res) => {
-                const data = res.data.map((user) => ({
-                    id: user.id,
-                    name: `${user.name}(${user.username})`,
-                    email: user.email,
-                    address: `${user.address.city}${user.address.suite}${user.address.street}`,
-                }));
-                setUserProfiles(data);
-            })
+            .then((res) => setUsers(res.data))
             .catch(() => {
-                setError(true);
+                showMessage({
+                    title: 'ユーザー取得に失敗しました',
+                    status: 'error',
+                });
             })
             .finally(() => {
                 setLoading(false);
             });
-    };
-    return { getUsers, userProfiles, loading, error };
+    }, []);
+    return { getUsers, loading, users };
 };
